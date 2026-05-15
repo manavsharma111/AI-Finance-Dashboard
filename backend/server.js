@@ -28,9 +28,15 @@ app.use("/api/ai", aiRouter)
 // DB and Server
 const startServer = async () => {
   await connectDB();
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  });
+  // Only listen if not running as a serverless function (Vercel)
+  if (process.env.NODE_ENV !== 'production') {
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  }
 };
 
 startServer();
+
+// For Vercel
+export default app;

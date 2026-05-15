@@ -1,0 +1,37 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563EB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#06B6D4;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <rect width="300" height="300" rx="60" fill="#0F172A"/>
+
+  <!-- Wallet -->
+  <rect x="70" y="95" width="160" height="110" rx="24" fill="url(#grad)"/>
+
+  <!-- Wallet flap -->
+  <rect x="70" y="95" width="160" height="40" rx="24" fill="#1D4ED8"/>
+
+  <!-- Coin -->
+  <circle cx="195" cy="150" r="18" fill="#FACC15"/>
+  <circle cx="195" cy="150" r="8" fill="#FDE68A"/>
+
+  <!-- Graph line -->
+  <path d="M95 180 L125 155 L150 170 L185 130" 
+        stroke="white" 
+        stroke-width="8" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+
+  <!-- Brand text -->
+  <text x="150" y="245" 
+        font-size="28" 
+        font-family="Arial" 
+        font-weight="bold" 
+        fill="white" 
+        text-anchor="middle">
+    Expensio
+  </text>
+</svg>

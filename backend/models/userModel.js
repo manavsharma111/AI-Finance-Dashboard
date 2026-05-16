@@ -19,6 +19,18 @@ const userSchema = new mongoose.Schema({
     lastInsightsDate: {
         type: Date,
         default: null
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    otp: {
+        type: String,
+        default: null
+    },
+    otpExpiry: {
+        type: Date,
+        default: null
     }
 })
 

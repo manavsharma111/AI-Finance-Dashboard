@@ -260,7 +260,7 @@ const Profile = ({ user: initialUser, onUpdateProfile, onLogout }) => {
                     </div>
                   )}
                 </div>
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <label className={profileStyles.label}>Member Since</label>
                   <div className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100">
                     <div className="p-2 bg-teal-50 text-teal-600 rounded-lg">
@@ -268,7 +268,7 @@ const Profile = ({ user: initialUser, onUpdateProfile, onLogout }) => {
                     </div>
                     <p className="font-bold text-gray-800">{user.joinDate}</p>
                   </div>
-                </div>
+                </div> */}
 
                 {editMode && (
                   <div className="flex gap-4 pt-4">

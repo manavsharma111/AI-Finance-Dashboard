@@ -171,10 +171,10 @@ export const expensePageStyles = {
 export const profileStyles = {
   container: "max-w-4xl mx-auto py-8 px-4",
   mainContainer: "bg-white -mx-7 rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] overflow-hidden border border-white",
-  header: "bg-gradient-to-br from-teal-500 to-emerald-600 p-12 text-center relative",
+  header: "bg-gradient-to-br from-orange-500 to-yellow-500 p-12 text-center relative",
   avatar: "w-28 h-28 mx-auto rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center mb-4 shadow-xl border border-white/30",
   userName: "text-3xl font-black text-white leading-tight",
-  userEmail: "text-teal-100 mt-1 font-medium",
+  userEmail: "text-yellow-100 mt-1 font-medium",
   content: "p-8 -mx-6.5",
   grid: "grid grid-cols-1 md:grid-cols-2 gap-8",
   card: "bg-gray-50 rounded-[2rem] p-8 border border-gray-100 transition-all hover:shadow-lg hover:bg-white",

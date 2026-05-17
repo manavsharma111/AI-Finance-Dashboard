@@ -467,19 +467,6 @@ const ExpensePage = () => {
             {timeFrame === "daily" ? "Hourly" : timeFrame === "yearly" ? "Monthly" : "Daily"} Expense Trends
             <span className="text-sm text-gray-500 font-normal"> ({timeFrameRange.label})</span>
           </h3>
-
-          <button
-            onClick={() => handleExport('excel')}
-            className={styles.chartExportButton}
-          >
-            <Download size={18} /> Excel
-          </button>
-          <button
-            onClick={() => handleExport('csv')}
-            className={`${styles.chartExportButton} ml-2`}
-          >
-            <Download size={18} /> CSV
-          </button>
         </div>
 
         <div className={styles.chartHeight}>

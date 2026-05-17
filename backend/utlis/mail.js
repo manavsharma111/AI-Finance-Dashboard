@@ -1,14 +1,21 @@
 import nodemailer from 'nodemailer';
 
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com", // You can use Gmail or any other SMTP service
-    port: 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-        user: process.env.EMAIL_USER, // Your email address
-        pass: process.env.EMAIL_PASS, // Your email app password
-    },
-});
+let transporter = null;
+
+const getTransporter = () => {
+    if (!transporter) {
+        transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com", // You can use Gmail or any other SMTP service
+            port: 587,
+            secure: false, // true for 465, false for other ports
+            auth: {
+                user: process.env.EMAIL_USER, // Your email address
+                pass: process.env.EMAIL_PASS, // Your email app password
+            },
+        });
+    }
+    return transporter;
+};
 
 export const sendOTP = async (email, otp) => {
     const mailOptions = {
@@ -31,7 +38,8 @@ export const sendOTP = async (email, otp) => {
     };
 
     try {
-        await transporter.sendMail(mailOptions);
+        const activeTransporter = getTransporter();
+        await activeTransporter.sendMail(mailOptions);
         return true;
     } catch (error) {
         console.error("Error sending email:", error);

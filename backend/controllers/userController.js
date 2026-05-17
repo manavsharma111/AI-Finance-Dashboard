@@ -82,7 +82,14 @@ export async function loginUser(req, res) {
       user.otp = otp;
       user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
       await user.save();
-      await sendOTP(user.email, otp);
+      
+      const emailSent = await sendOTP(user.email, otp);
+      if (!emailSent) {
+        return res.status(500).json({ 
+          success: false, 
+          message: "Account is not verified, but failed to send the verification OTP. Please verify your email SMTP credentials or try again."
+        });
+      }
 
       return res.status(403).json({ 
         success: false, 

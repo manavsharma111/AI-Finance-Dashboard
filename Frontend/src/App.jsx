@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard"
 import "./index.css"
 import Login from "./components/Login"
 import Signup from "./components/Signup"
+import ForgotPassword from "./components/ForgotPassword"
 import axios from "axios"
 import Income from "./pages/Income"
 import Expense from "./pages/Expense"
@@ -205,6 +206,7 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/signup" element={<Signup onSignup={handleSignup} />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route
           path="/"
           element={

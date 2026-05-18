@@ -7,6 +7,8 @@ import { sendOTP } from "../utlis/mail.js";
 const JWT_SECRET = process.env.JWT_SECRET;
 const TOKEN_EXPIRES = "24h";
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const isStrongPassword = (password) => 
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/.test(password);
 
 const createToken = (userId) =>
   jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: TOKEN_EXPIRES });
@@ -22,8 +24,11 @@ export async function registerUser(req, res) {
     return res.status(400).json({ success: false, message: "Invalid email." });
   }
 
-  if (password.length < 8) {
-    return res.status(400).json({ success: false, message: "Password must be at least 8 characters." });
+  if (!isStrongPassword(password)) {
+    return res.status(400).json({ 
+      success: false, 
+      message: "Password must be at least 8 characters long, and contain at least one uppercase letter, one lowercase letter, one number, and one special character." 
+    });
   }
 
   try {
@@ -146,11 +151,122 @@ export async function updateProfile(req, res) {
   }
 }
 
+export async function forgotPassword(req, res) {
+  const { email } = req.body;
+
+  if (!email || !isValidEmail(email)) {
+    return res.status(400).json({ success: false, message: "Valid email is required." });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    user.forgotPasswordToken = otp;
+    user.forgotPasswordExpiry = new Date(Date.now() + 10 * 60 * 1000);
+    await user.save();
+
+    const emailSent = await sendOTP(user.email, otp);
+    if (!emailSent) {
+      return res.status(500).json({ 
+        success: false, 
+        message: "Failed to send OTP. Please try again."
+      });
+    }
+
+    return res.json({ success: true, message: "OTP sent to your email." });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+export async function verifyForgotPasswordOTP(req, res) {
+  const { email, otp } = req.body;
+
+  if (!email || !otp) {
+    return res.status(400).json({ success: false, message: "Email and OTP are required." });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    if (user.forgotPasswordToken !== otp) {
+      return res.status(400).json({ success: false, message: "Invalid OTP." });
+    }
+
+    if (new Date() > user.forgotPasswordExpiry) {
+      return res.status(400).json({ success: false, message: "OTP has expired." });
+    }
+
+    return res.json({ success: true, message: "OTP verified successfully." });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+}
+
+export async function resetPassword(req, res) {
+  const { email, otp, newPassword,confirmNewPassword } = req.body;
+
+  if (!email || !otp || !newPassword || !confirmNewPassword || newPassword !== confirmNewPassword) {
+    return res.status(400).json({ success: false, message: "Invalid input." });
+  }
+
+  if (!isStrongPassword(newPassword)) {
+    return res.status(400).json({ 
+      success: false, 
+      message: "Password must be at least 8 characters long, and contain at least one uppercase letter, one lowercase letter, one number, and one special character." 
+    });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    if (user.forgotPasswordToken !== otp) {
+      return res.status(400).json({ success: false, message: "Invalid OTP." });
+    }
+
+    if (new Date() > user.forgotPasswordExpiry) {
+      return res.status(400).json({ success: false, message: "OTP has expired." });
+    }
+
+    // Check if the new password is same as the old password
+    const isSameAsOld = await bcrypt.compare(newPassword, user.password);
+    if (isSameAsOld) {
+      return res.status(400).json({ success: false, message: "New password cannot be the same as your old password." });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.forgotPasswordToken = null;
+    user.forgotPasswordExpiry = null;
+    await user.save();
+
+    return res.json({ success: true, message: "Password reset successfully." });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+} 
+
 export async function updatePassword(req, res) {
   const { currentPassword, newPassword } = req.body;
 
-  if (!currentPassword || !newPassword || currentPassword === newPassword || newPassword.length < 8) {
+  if (!currentPassword || !newPassword || currentPassword === newPassword) {
     return res.status(400).json({ success: false, message: "Invalid password input." });
+  }
+
+  if (!isStrongPassword(newPassword)) {
+    return res.status(400).json({ 
+      success: false, 
+      message: "New password must be at least 8 characters long, and contain at least one uppercase letter, one lowercase letter, one number, and one special character." 
+    });
   }
 
   try {
